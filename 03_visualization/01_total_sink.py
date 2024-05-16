@@ -14,7 +14,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 dem = wbe.read_raster('Hanwen_10m.tif')
 
 # 循环处理CSV文件中的0到99行
-for n in range(100):
+for n in range(50):
     row = df.iloc[int(n)]
     row_list = row.tolist()
 

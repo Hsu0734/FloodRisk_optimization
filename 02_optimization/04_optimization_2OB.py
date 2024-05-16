@@ -108,15 +108,15 @@ for i in range(10):
             from pymoo.termination import get_termination
 
             algorithm = NSGA2(
-                pop_size=100,
-                n_offsprings=40,
+                pop_size=50,
+                n_offsprings=20,
                 sampling=FloatRandomSampling(),
                 crossover=SBX(prob=0.9, eta=20),
                 mutation=PM(eta=20),
                 eliminate_duplicates=True)
 
 
-            termination = get_termination("n_gen", 100)
+            termination = get_termination("n_gen", 200)
 
             from pymoo.optimize import minimize
             res = minimize(problem,
