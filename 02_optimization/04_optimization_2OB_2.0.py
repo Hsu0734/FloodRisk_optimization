@@ -21,7 +21,7 @@ for i in range(10):
 
             wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\00_data_source'
-            dem = wbe.read_raster('Hanwen_10m.tif')
+            dem = wbe.read_raster('Hanwen_5m.tif')
 
             # creat a blank raster image of same size as the dem
             layer = wbe.new_raster(dem.configs)
@@ -57,7 +57,7 @@ for i in range(10):
                 def _evaluate(self, x, out, *args, **kwargs):
                     #var_list = [float(value) for value in x]
 
-                    earth_volume_function = sum(abs(i) for i in x) * 4
+                    earth_volume_function = sum(abs(i) for i in x) * 25   # resolution = 100m2/grid cell
                     sink_function = path_sum_calculation(x)
 
                     out["F"] = [earth_volume_function, sink_function]
@@ -105,8 +105,8 @@ for i in range(10):
             from pymoo.termination import get_termination
 
             algorithm = NSGA2(
-                pop_size=100,
-                n_offsprings=40,
+                pop_size=50,
+                n_offsprings=20,
                 sampling=FloatRandomSampling(),
                 crossover=SBX(prob=0.9, eta=20),
                 mutation=PM(eta=20),
@@ -135,16 +135,16 @@ for i in range(10):
             plot.add(F, s=10)
             plot.show()
 
-            plot_figure_path = 'scatter_plot_DEM10m.png'
+            plot_figure_path = 'scatter_plot_DEM5m.png'
             plot.save(plot_figure_path)
 
             # 2D Pairwise Scatter Plots
 
             # save the data
             result_df = pd.DataFrame(F)
-            result_df.to_csv('output_solution_DEM10m.csv', index=False)
+            result_df.to_csv('output_solution_DEM5m.csv', index=False)
             result_df = pd.DataFrame(X)
-            result_df.to_csv('output_variable_DEM10m.csv', index=False)
+            result_df.to_csv('output_variable_DEM5m.csv', index=False)
 
 
             ### Decision making ###

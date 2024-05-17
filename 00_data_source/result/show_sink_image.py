@@ -18,7 +18,9 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('min_earth_volume_dem.tif')
+dem = wbe.read_raster('min_sink_area_dem.tif')
+#dem = wbe.read_raster('min_earth_volume_dem.tif')
+
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
 sink = wbe.sink(dem)
 sink_area = wbe.new_raster(dem.configs)

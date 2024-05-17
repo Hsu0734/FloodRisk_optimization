@@ -11,21 +11,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-plt.rcParams['font.size'] = 20
+
 wbe = wbw.WbEnvironment()
 wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\00_data_source'
 
 # web read DEM data
-dem = wbe.read_raster('DEM2m.tif')
+dem = wbe.read_raster('Hanwen.tif')
 
 # resample
-resample = wbe.resample(input_rasters=[dem], cell_size=10.0)
-wbe.write_raster(resample, 'DEM_demo_resample_10m.tif', compress=True)
+resample = wbe.resample(input_rasters=[dem], cell_size=5.0)
+wbe.write_raster(resample, 'Hanwen_5m.tif', compress=True)
 
 # visualization
-path_01 = '../00_data_source/DEM_demo_resample_10m.tif'
+path_01 = '../00_data_source/Hanwen_5m.tif'
 data_01 = rs.open(path_01)
 
 dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
