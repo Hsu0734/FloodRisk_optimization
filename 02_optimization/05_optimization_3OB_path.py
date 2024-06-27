@@ -1,5 +1,5 @@
 """
-Multi-objective optimization: Sink optimization & cost & velocity
+Multi-objective optimization: Sink optimization & cost & flow path
 Author: Hanwen Xu
 Version: 1
 Date: May 11, 2024
@@ -42,7 +42,7 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([0.5] * n_grid),
+                         xu=np.array([2] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
@@ -50,12 +50,12 @@ class MyProblem(ElementwiseProblem):
 
         # notice your function should be Min function
         earth_volume_function = sum(abs(i) for i in x) * 100
-        velocity_function, sink_function = path_sum_calculation(x)
+        path_function, sink_function = path_sum_calculation(x)
 
         # notice your function should be <= 0
         # g1 = sum(abs(i) for i in var_list) - 592
 
-        out["F"] = [earth_volume_function, velocity_function, sink_function]
+        out["F"] = [earth_volume_function, path_function, sink_function]
         #out["G"] = [g1]
 
 def path_sum_calculation(var_list):
@@ -74,9 +74,8 @@ def path_sum_calculation(var_list):
 
     # path length calculation
     flow_accum = wbe.d8_flow_accum(dem_pop, out_type='cells')
-    slope = wbe.slope(dem_pop, units="percent")
     sink = wbe.sink(dem_pop, zero_background=False)
-    velocity = wbe.new_raster(dem_pop.configs)
+    path_length = wbe.new_raster(dem_pop.configs)
 
     Sink_value = []
     a = 0.0
@@ -92,25 +91,28 @@ def path_sum_calculation(var_list):
 
     for row in range(flow_accum.configs.rows):
         for col in range(flow_accum.configs.columns):
-            velo = flow_accum[row, col]
-
-            if velo == flow_accum.configs.nodata:
-                velocity[row, col] = flow_accum.configs.nodata
-            elif velo != flow_accum.configs.nodata:
-                slope_factor = (slope[row, col] / 100) ** 0.5
-                flow_factor = (flow_accum[row, col] * 100 * 0.000004215717) ** (2 / 3)
-                velocity[row, col] = (slope_factor * flow_factor / 0.03) ** 0.6
+            path = flow_accum[row, col]
+            if path >= 14.36:
+                path_length[row, col] = 1.0
+            elif path == flow_accum.configs.nodata:
+                path_length[row, col] = flow_accum.configs.nodata
+            else:
+                path_length[row, col] = 0.0
 
     # 找到max velocity
-    velocity_value = []
-    for row in range(velocity.configs.rows):
-        for col in range(velocity.configs.columns):
-            velocity_value.append(velocity[row, col])
+    Path_value = []
+    a = 0
+    for row in range(path_length.configs.rows):
+        for col in range(path_length.configs.columns):
+            if path_length[row, col] == path_length.configs.nodata:
+                Path_value.append(a)
+            else:
+                Path_value.append(path_length[row, col])
 
     # return 结果
     sink_sum = -sum(Sink_value)
-    max_velocity = max(velocity_value)
-    return max_velocity, sink_sum
+    path_sum = - sum(Path_value)
+    return path_sum, sink_sum
 
 problem = MyProblem(n_grid)
 
@@ -131,7 +133,7 @@ algorithm = NSGA2(
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 100)
+termination = get_termination("n_gen", 50)
 
 from pymoo.optimize import minimize
 res = minimize(problem,
@@ -159,12 +161,12 @@ plot.save(plot_figure_path)
 # 2D Pairwise Scatter Plots
 plt.figure(figsize=(7, 5))
 plt.scatter(F[:, 0], F[:, 1], s=20, facecolors='none', edgecolors='blue')
-plt.title("Max velocity (y) and total cost (x)")
+plt.title("Path length (y) and total cost (x)")
 plt.grid()
 plt.show()
 
 plt.scatter(F[:, 1], F[:, 2], s=20, facecolors='none', edgecolors='blue')
-plt.title("Sink area (y) and Max velocity (x)")
+plt.title("Sink area (y) and Path length (x)")
 plt.grid()
 plt.show()
 
