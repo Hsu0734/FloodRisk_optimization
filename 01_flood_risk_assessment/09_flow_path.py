@@ -18,9 +18,10 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('DEM2m.tif')
+dem = wbe.read_raster('Hanwen_5m.tif')
 
 # slope analysis
+# dem = wbe.fill_depressions(dem)
 flow_accu = wbe.d8_flow_accum(dem, out_type='cells')
 flow_path = wbe.new_raster(flow_accu.configs)
 for row in range(flow_accu.configs.rows):

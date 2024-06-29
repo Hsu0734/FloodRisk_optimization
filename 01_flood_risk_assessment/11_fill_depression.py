@@ -1,7 +1,7 @@
 """
 Slope analysis
 Author: Hanwen Xu
-Date: Oct 01, 2023
+Date: Jun 029, 2024
 """
 
 import whitebox_workflows as wbw
@@ -19,25 +19,25 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 # web read DEM data
 dem = wbe.read_raster('Hanwen_5m.tif')
-# dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
-sink = wbe.sink(dem)
-sink_area = wbe.new_raster(dem.configs)
+fill_dem = wbe.fill_depressions(dem)
+sink_area = fill_dem - dem
+
+retention_area = wbe.new_raster(dem.configs)
 
 for row in range(sink_area.configs.rows):
     for col in range(sink_area.configs.columns):
-        area = dem[row, col]
-        area_sink = sink[row, col]
-        if area != dem.configs.nodata and area_sink == sink.configs.nodata:
-            sink_area[row, col] = 0.0
-        elif area == dem.configs.nodata:
-            sink_area[row, col] = dem.configs.nodata
-        elif area_sink != sink.configs.nodata:
-            sink_area[row, col] = 1.0
+        sink_volume = sink_area[row, col]
+        if sink_volume == dem.configs.nodata:
+            retention_area[row, col] = dem.configs.nodata
+        elif sink_volume >= 0.05:
+            retention_area[row, col] = sink_volume
+        elif sink_volume <= 0.05 and sink_volume != dem.configs.nodata:
+            retention_area[row, col] = 0.0
 
-wbe.write_raster(sink_area, 'DEM_demo_sink.tif', compress=True)
+wbe.write_raster(retention_area, 'DEM_demo_sink_dem.tif', compress=True)
 
 # visualization
-path_01 = '../00_data_source/DEM_demo_sink.tif'
+path_01 = '../00_data_source/DEM_demo_sink_dem.tif'
 data_01 = rs.open(path_01)
 
 dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
@@ -56,3 +56,15 @@ cbar.set_label('Sink area')
 plt.ticklabel_format(style='plain')
 ax.grid(True, linestyle='--', color='grey')
 plt.show()
+
+
+Retention_volume = []
+for row in range(retention_area.configs.rows):
+    for col in range(retention_area.configs.columns):
+        sink_volume = retention_area[row, col]
+        if sink_volume != retention_area.configs.nodata:
+            volume = retention_area[row, col] * 25    # resolution = 5m
+            Retention_volume.append(volume)
+
+Total_volume = sum(Retention_volume)
+print(Total_volume)
