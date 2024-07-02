@@ -14,11 +14,11 @@ plt.rcParams['font.size'] = 20
 wbe = wbw.WbEnvironment()
 wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
-                        r'\FloodRisk_optimization\00_data_source'
+                        r'\FloodRisk_optimization\00_data_source\result'
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('min_sink_volume_dem.tif')
 fill_dem = wbe.fill_depressions(dem)
 sink_area = fill_dem - dem
 
@@ -37,7 +37,7 @@ for row in range(sink_area.configs.rows):
 wbe.write_raster(retention_area, 'DEM_demo_sink_dem.tif', compress=True)
 
 # visualization
-path_01 = '../00_data_source/DEM_demo_sink_dem.tif'
+path_01 = '../00_data_source/result/DEM_demo_sink_dem.tif'
 data_01 = rs.open(path_01)
 
 dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
@@ -63,7 +63,7 @@ for row in range(retention_area.configs.rows):
     for col in range(retention_area.configs.columns):
         sink_volume = retention_area[row, col]
         if sink_volume != retention_area.configs.nodata:
-            volume = retention_area[row, col] * 25   # resolution = 5m
+            volume = retention_area[row, col] * 25    # resolution = 5m
             Retention_volume.append(volume)
 
 Total_volume = sum(Retention_volume)
