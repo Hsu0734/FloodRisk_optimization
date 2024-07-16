@@ -20,8 +20,12 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 # web read DEM data
 dem = wbe.read_raster('Hanwen_5m.tif')
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
-sink = wbe.sink(dem)
+fill_dem = wbe.fill_depressions(dem, max_depth=0.05)
+sink = wbe.sink(fill_dem)
 sink_area = wbe.new_raster(dem.configs)
+
+Sink_area = []
+a = 1
 
 for row in range(sink_area.configs.rows):
     for col in range(sink_area.configs.columns):
@@ -33,6 +37,7 @@ for row in range(sink_area.configs.rows):
             sink_area[row, col] = dem.configs.nodata
         elif area_sink != sink.configs.nodata:
             sink_area[row, col] = 1.0
+            Sink_area.append(a)
 
 wbe.write_raster(sink_area, 'DEM_demo_sink.tif', compress=True)
 
@@ -56,3 +61,5 @@ cbar.set_label('Sink area')
 plt.ticklabel_format(style='plain')
 ax.grid(True, linestyle='--', color='grey')
 plt.show()
+
+print(sum(Sink_area))
