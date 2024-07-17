@@ -33,25 +33,27 @@ for n in range(50):
                 m += 1
 
     #dem_solution = dem5m - layer
-    dem_solution = wbe.raster_calculator(expression="'dem5m' - 'layer'", input_rasters=[dem5m, layer])
+    layer = dem5m - layer
 
-    sink = wbe.sink(dem_solution)
-    sink_area = wbe.new_raster(dem5m.configs)
+    fill_dem = wbe.fill_depressions(layer)
+    sink_area = fill_dem - layer
+
+    retention_area = wbe.new_raster(dem5m.configs)
+
     for row in range(sink_area.configs.rows):
         for col in range(sink_area.configs.columns):
-            area = dem5m[row, col]
-            area_sink = sink[row, col]
-            if area != dem.configs.nodata and area_sink == sink.configs.nodata:
-                sink_area[row, col] = 0.0
-            elif area == dem.configs.nodata:
-                sink_area[row, col] = dem.configs.nodata
-            elif area_sink != sink.configs.nodata:
-                sink_area[row, col] = 1.0
+            sink_volume = sink_area[row, col]
+            if sink_volume == dem5m.configs.nodata:
+                retention_area[row, col] = dem.configs.nodata
+            elif sink_volume >= 0.05:
+                retention_area[row, col] = sink_volume
+            elif sink_volume <= 0.05 and sink_volume != dem.configs.nodata:
+                retention_area[row, col] = 0.0
 
     wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
-    output_filename = f'DEM_sink_DEM10m_{n}.tif'
-    wbe.write_raster(sink_area, output_filename, compress=True)
+    output_filename = f'DEM_sink_volume_DEM10m_{n}.tif'
+    wbe.write_raster(retention_area, output_filename, compress=True)
 
     # visualization
     path_01 = f'../03_visualization/{output_filename}'

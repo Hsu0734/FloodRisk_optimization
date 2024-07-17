@@ -17,6 +17,7 @@ wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source'
 mask = wbe.read_raster('Hanwen_mask.tif')
+dem = wbe.read_raster('Hanwen_5m.tif')
 
 # creat a blank raster image of same size as the dem
 layer = wbe.new_raster(mask.configs)
@@ -26,9 +27,11 @@ grid = []
 q = 1
 for row in range(mask.configs.rows):
     for col in range(mask.configs.columns):
-        if mask[row, col] == mask.configs.nodata:
+        if dem[row, col] == mask.configs.nodata:
             layer[row, col] = mask.configs.nodata
-        elif mask[row, col] != mask.configs.nodata:
+        elif dem[row, col] != mask.configs.nodata and mask[row, col] == mask.configs.nodata:
+            layer[row, col] = 0.0
+        elif dem[row, col] != mask.configs.nodata:
             layer[row, col] = 0.0
             grid.append(q)
 n_grid = sum(grid)
@@ -45,7 +48,7 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([0.5] * n_grid),
+                         xu=np.array([0.2] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
@@ -58,18 +61,15 @@ class MyProblem(ElementwiseProblem):
         out["F"] = [earth_volume_function, sink_volume_function, sink_area_function]
 
 def sink_sum_calculation(var_list):
-
-    wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
-                            r'\FloodRisk_optimization\00_data_source'
-    dem = wbe.read_raster('Hanwen_5m.tif')
-
     i = 0
     cut_and_fill = wbe.new_raster(mask.configs)
     for row in range(mask.configs.rows):
         for col in range(mask.configs.columns):
-            if mask[row, col] == mask.configs.nodata:
+            if dem[row, col] == mask.configs.nodata:
                 cut_and_fill[row, col] = dem.configs.nodata
-            elif mask[row, col] != mask.configs.nodata:
+            elif dem[row, col] != mask.configs.nodata and mask[row, col] == mask.configs.nodata:
+                layer[row, col] = 0.0
+            elif dem[row, col] != mask.configs.nodata:
                 cut_and_fill[row, col] = var_list[i]
                 i = i + 1
 
@@ -139,7 +139,7 @@ algorithm = NSGA2(
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 100)
+termination = get_termination("n_gen", 54)
 
 from pymoo.optimize import minimize
 res = minimize(problem,
@@ -192,12 +192,17 @@ min_sink_area_dem = wbe.new_raster(dem.configs)
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source\result'
 t = 0
-for row in range(dem.configs.rows):
-    for col in range(dem.configs.columns):
+for row in range(mask.configs.rows):
+    for col in range(mask.configs.columns):
         if dem[row, col] == dem.configs.nodata:
-            min_earth_volume_dem[row, col] = dem.configs.nodata
-            min_sink_volume_dem[row, col] = dem.configs.nodata
-            min_sink_area_dem[row, col] = dem.configs.nodata
+            min_earth_volume_dem[row, col] = mask.configs.nodata
+            min_sink_volume_dem[row, col] = mask.configs.nodata
+            min_sink_area_dem[row, col] = mask.configs.nodata
+
+        elif dem[row, col] != dem.configs.nodata and mask[row, col] == mask.configs.nodata:
+            min_earth_volume_dem[row, col] = 0.0
+            min_sink_volume_dem[row, col] = 0.0
+            min_sink_area_dem[row, col] = 0.0
 
         elif dem[row, col] != dem.configs.nodata:
             min_earth_volume_dem[row, col] = min_earth_volume_solution[t]

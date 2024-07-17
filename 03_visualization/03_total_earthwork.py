@@ -11,22 +11,28 @@ wbe = wbw.WbEnvironment()
 wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\00_data_source'
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('Hanwen_mask.tif')
+dem5m = wbe.read_raster('Hanwen_5m.tif')
 
 # 循环处理CSV文件中的0到99行
 for n in range(50):
+
     row = df.iloc[int(n)]
     row_list = row.tolist()
 
-    layer = wbe.new_raster(dem.configs)
+    layer = wbe.new_raster(dem5m.configs)
     m = 0
-    for row in range(dem.configs.rows):
-        for col in range(dem.configs.columns):
-            if dem[row, col] == dem.configs.nodata:
+    for row in range(dem5m.configs.rows):
+        for col in range(dem5m.configs.columns):
+            if dem5m[row, col] == dem.configs.nodata:
                 layer[row, col] = dem.configs.nodata
-            elif dem[row, col] != dem.configs.nodata:
+            elif dem5m[row, col] != dem.configs.nodata and dem[row, col] == dem.configs.nodata:
+                layer[row, col] = 0.0
+            elif dem5m[row, col] != dem.configs.nodata:
                 layer[row, col] = row_list[m]
                 m += 1
+
+    #layer = dem5m - layer
 
     wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
