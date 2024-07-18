@@ -68,7 +68,7 @@ def sink_sum_calculation(var_list):
             if dem[row, col] == dem.configs.nodata:
                 cut_and_fill[row, col] = dem.configs.nodata
             elif dem[row, col] != dem.configs.nodata and mask[row, col] == mask.configs.nodata:
-                layer[row, col] = 0.0
+                cut_and_fill[row, col] = 0.0
             elif dem[row, col] != dem.configs.nodata and mask[row, col] != mask.configs.nodata:
                 cut_and_fill[row, col] = var_list[i]
                 i = i + 1
@@ -81,11 +81,18 @@ def sink_sum_calculation(var_list):
 
     output_filename = f'DEM_iteration.tif'
     wbe.write_raster(dem_pop, output_filename, compress=True)
+    dem_pop = wbe.read_raster(output_filename)
 
     # sink volume calculation
-    dem_pop = wbe.read_raster(output_filename)
     fill_dem = wbe.fill_depressions(dem_pop)
     sink_area = fill_dem - dem_pop
+
+    wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
+                            r'\FloodRisk_optimization\04_iteration_file'
+
+    output_filename_2 = f'DEM_iteration_sink.tif'
+    wbe.write_raster(sink_area, output_filename_2, compress=True)
+    sink_area = wbe.read_raster(output_filename_2)
 
     retention_area = wbe.new_raster(dem_pop.configs)
 

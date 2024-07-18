@@ -34,39 +34,27 @@ for n in range(50):
 
     layer_after = dem5m - layer
 
-    '''wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
+    wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
 
     output_filename = f'DEM_after_5m_{n}.tif'
     wbe.write_raster(layer_after, output_filename, compress=True)
 
     # visualization
-    path_01 = f'../03_visualization/{output_filename}'
+    '''path_01 = f'../03_visualization/{output_filename}'
     data_01 = rs.open(path_01)
 
     fig, ax = plt.subplots(figsize=(16, 16))
     ax.tick_params(axis='both', which='major', labelsize=20)
     show(data_01, title=f'DEM_sink_volume_{n}', ax=ax)
     plt.ticklabel_format(style='plain')
-    plt.show()
+    plt.show()'''
 
 
+    layer_after = wbe.read_raster(output_filename)
 
-
-    layer_after = wbe.read_raster(output_filename)'''
-
-    layer_after_1 = wbe.new_raster(layer_after.configs)
-
-    for row in range(layer_after.configs.rows):
-        for col in range(layer_after.configs.columns):
-            if layer_after[row, col] == layer_after.configs.nodata:
-                layer_after_1[row, col] = layer_after.configs.nodata
-            elif layer_after[row, col] != layer_after.configs.nodata:
-                layer_after_1[row, col] = layer_after[row, col]
-
-
-    fill_dem = wbe.fill_depressions(layer_after_1)
-    sink_area = fill_dem - layer_after_1
+    fill_dem = wbe.fill_depressions(layer_after)
+    sink_area = fill_dem - layer_after
 
     retention_area = wbe.new_raster(dem5m.configs)
 
