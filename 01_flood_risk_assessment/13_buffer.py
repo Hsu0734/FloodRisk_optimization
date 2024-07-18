@@ -1,5 +1,5 @@
 """
-flow accumulation analysis
+buffer analysis
 Author: Hanwen Xu
 Date: Oct 01, 2023
 """
@@ -18,27 +18,17 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('DEM_demo_flow_path.tif')
+sink = wbe.read_raster('DEM_demo_sink.tif')
 
-# slope analysis
-dem = wbe.fill_depressions(dem)
-flow_accu = wbe.d8_flow_accum(dem, out_type='cells')
-flow_path = wbe.new_raster(flow_accu.configs)
-for row in range(flow_accu.configs.rows):
-    for col in range(flow_accu.configs.columns):
-        elev = flow_accu[row, col]
-        if elev >= 75.12:
-            flow_path[row, col] = 1.0
-        elif elev == flow_accu.configs.nodata:
-            flow_path[row, col] = flow_accu.configs.nodata
-        else:
-            flow_path[row, col] = 0.0
+buffer = wbe.buffer_raster(dem, buffer_size=1.0, grid_cells_units=True)
+buffer = buffer + sink
 
-wbe.write_raster(flow_path, 'DEM_demo_flow_path.tif', compress=True)
 
+wbe.write_raster(buffer, 'DEM_demo_buffer.tif', compress=True)
 
 # visualization
-path_01 = '../00_data_source/DEM_demo_flow_path.tif'
+path_01 = '../00_data_source/DEM_demo_buffer.tif'
 data_01 = rs.open(path_01)
 
 dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值

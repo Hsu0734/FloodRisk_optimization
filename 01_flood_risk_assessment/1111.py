@@ -12,7 +12,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_mask.tif')
+dem = wbe.read_raster('Hanwen_mask_2.tif')
 
 for row in range(dem.configs.rows):
     for col in range(dem.configs.columns):

@@ -16,7 +16,7 @@ wbe.verbose = False
 
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source'
-mask = wbe.read_raster('Hanwen_mask.tif')
+mask = wbe.read_raster('Hanwen_mask_2.tif')
 dem = wbe.read_raster('Hanwen_5m.tif')
 
 # creat a blank raster image of same size as the dem
@@ -62,20 +62,20 @@ class MyProblem(ElementwiseProblem):
 
 def sink_sum_calculation(var_list):
     i = 0
-    cut_and_fill = wbe.new_raster(mask.configs)
-    for row in range(mask.configs.rows):
-        for col in range(mask.configs.columns):
+    cut_and_fill = wbe.new_raster(dem.configs)
+    for row in range(dem.configs.rows):
+        for col in range(dem.configs.columns):
             if dem[row, col] == mask.configs.nodata:
                 cut_and_fill[row, col] = dem.configs.nodata
-            elif dem[row, col] != mask.configs.nodata and mask[row, col] == mask.configs.nodata:
+            elif dem[row, col] != dem.configs.nodata and mask[row, col] == mask.configs.nodata:
                 layer[row, col] = 0.0
-            elif dem[row, col] != mask.configs.nodata:
+            elif dem[row, col] != dem.configs.nodata:
                 cut_and_fill[row, col] = var_list[i]
                 i = i + 1
 
     # creat dem_pop
-    dem_pop = wbe.raster_calculator(expression="'dem' - 'cut_and_fill'", input_rasters=[dem, cut_and_fill])
-    # dem_pop = dem - cut_and_fill
+    # dem_pop = wbe.raster_calculator(expression="'dem' - 'cut_and_fill'", input_rasters=[dem, cut_and_fill])
+    dem_pop = dem - cut_and_fill
 
     # sink volume calculation
     fill_dem = wbe.fill_depressions(dem_pop)

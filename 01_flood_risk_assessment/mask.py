@@ -19,12 +19,12 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 # web read DEM data
 dem = wbe.read_raster('Hanwen_5m.tif')
-mask = wbe.read_raster('buffer_reclass.tif')
+mask = wbe.read_raster('DEM_demo_buffer.tif')
 
 # slope analysis
 new_mask = wbe.new_raster(dem.configs)
 
-for row in range(dem.configs.rows):
+'''for row in range(dem.configs.rows):
     for col in range(dem.configs.columns):
         elev = dem[row, col]
         mask_elev = mask[row, col]
@@ -33,13 +33,24 @@ for row in range(dem.configs.rows):
         elif elev == dem.configs.nodata:
             new_mask[row, col] = dem.configs.nodata
         else:
+            new_mask[row, col] = 1.0'''
+
+for row in range(dem.configs.rows):
+    for col in range(dem.configs.columns):
+        elev = dem[row, col]
+        mask_elev = mask[row, col]
+        if mask_elev == -32768.0:
+            new_mask[row, col] = dem.configs.nodata
+        elif mask_elev == 0.0:
+            new_mask[row, col] = dem.configs.nodata
+        else:
             new_mask[row, col] = 1.0
 
-wbe.write_raster(new_mask, 'Hanwen_mask.tif', compress=True)
+wbe.write_raster(new_mask, 'Hanwen_mask_2.tif', compress=True)
 
 
 # visualization
-path_01 = '../00_data_source/Hanwen_mask.tif'
+path_01 = '../00_data_source/Hanwen_mask_2.tif'
 data_01 = rs.open(path_01)
 
 dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
