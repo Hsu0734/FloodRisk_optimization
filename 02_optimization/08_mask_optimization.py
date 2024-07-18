@@ -48,7 +48,7 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([0.2] * n_grid),
+                         xu=np.array([0.5] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
@@ -65,19 +65,25 @@ def sink_sum_calculation(var_list):
     cut_and_fill = wbe.new_raster(dem.configs)
     for row in range(dem.configs.rows):
         for col in range(dem.configs.columns):
-            if dem[row, col] == mask.configs.nodata:
+            if dem[row, col] == dem.configs.nodata:
                 cut_and_fill[row, col] = dem.configs.nodata
             elif dem[row, col] != dem.configs.nodata and mask[row, col] == mask.configs.nodata:
                 layer[row, col] = 0.0
-            elif dem[row, col] != dem.configs.nodata:
+            elif dem[row, col] != dem.configs.nodata and mask[row, col] != mask.configs.nodata:
                 cut_and_fill[row, col] = var_list[i]
                 i = i + 1
 
     # creat dem_pop
     # dem_pop = wbe.raster_calculator(expression="'dem' - 'cut_and_fill'", input_rasters=[dem, cut_and_fill])
     dem_pop = dem - cut_and_fill
+    wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
+                            r'\FloodRisk_optimization\04_iteration_file'
+
+    output_filename = f'DEM_iteration.tif'
+    wbe.write_raster(dem_pop, output_filename, compress=True)
 
     # sink volume calculation
+    dem_pop = wbe.read_raster(output_filename)
     fill_dem = wbe.fill_depressions(dem_pop)
     sink_area = fill_dem - dem_pop
 
@@ -139,7 +145,7 @@ algorithm = NSGA2(
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 54)
+termination = get_termination("n_gen", 50)
 
 from pymoo.optimize import minimize
 res = minimize(problem,

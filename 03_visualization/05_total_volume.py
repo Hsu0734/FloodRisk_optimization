@@ -34,13 +34,10 @@ for n in range(50):
 
     layer_after = dem5m - layer
 
-    wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
+    '''wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
 
     output_filename = f'DEM_after_5m_{n}.tif'
-    wbe.write_raster(layer_after, output_filename, compress=True)
-
-    output_filename_02 = f'DEM_volume_5m_{n}.tif'
     wbe.write_raster(layer_after, output_filename, compress=True)
 
     # visualization
@@ -56,9 +53,20 @@ for n in range(50):
 
 
 
-    layer_after = wbe.read_raster(output_filename)
-    fill_dem = wbe.fill_depressions(layer_after)
-    sink_area = fill_dem - layer_after
+    layer_after = wbe.read_raster(output_filename)'''
+
+    layer_after_1 = wbe.new_raster(layer_after.configs)
+
+    for row in range(layer_after.configs.rows):
+        for col in range(layer_after.configs.columns):
+            if layer_after[row, col] == layer_after.configs.nodata:
+                layer_after_1[row, col] = layer_after.configs.nodata
+            elif layer_after[row, col] != layer_after.configs.nodata:
+                layer_after_1[row, col] = layer_after[row, col]
+
+
+    fill_dem = wbe.fill_depressions(layer_after_1)
+    sink_area = fill_dem - layer_after_1
 
     retention_area = wbe.new_raster(dem5m.configs)
 
@@ -72,8 +80,11 @@ for n in range(50):
             elif sink_volume <= 0.05 and sink_volume != dem5m.configs.nodata:
                 retention_area[row, col] = 0.0
 
+    wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
+                            r'\FloodRisk_optimization\03_visualization'
+
     output_filename_02 = f'DEM_volume_5m_{n}.tif'
-    wbe.write_raster(sink_area, output_filename_02, compress=True)
+    wbe.write_raster(retention_area, output_filename_02, compress=True)
 
     # visualization
     path_01 = f'../03_visualization/{output_filename_02}'
@@ -87,7 +98,7 @@ for n in range(50):
 
 
 
-    '''Retention_volume = []
+    Retention_volume = []
     for row in range(retention_area.configs.rows):
         for col in range(retention_area.configs.columns):
             sink_volume = retention_area[row, col]
@@ -96,4 +107,4 @@ for n in range(50):
                 Retention_volume.append(volume)
 
     Total_volume = sum(Retention_volume)
-    print(Total_volume)'''
+    print(Total_volume)
