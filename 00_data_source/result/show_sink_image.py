@@ -22,7 +22,8 @@ dem = wbe.read_raster('min_sink_volume_dem.tif')
 #dem = wbe.read_raster('min_earth_volume_dem.tif')
 
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
-sink = wbe.sink(dem)
+fill_dem = wbe.fill_depressions(dem, max_depth=0.05)
+sink = wbe.sink(fill_dem)
 sink_area = wbe.new_raster(dem.configs)
 
 Sink_value = []

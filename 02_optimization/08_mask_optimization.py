@@ -48,7 +48,7 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([0.5] * n_grid),
+                         xu=np.array([2] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
