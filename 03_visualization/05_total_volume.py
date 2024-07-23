@@ -17,8 +17,8 @@ dem5m = wbe.read_raster('Hanwen_5m.tif')
 # 循环处理CSV文件中的0到99行
 for n in range(50):
 
-    row = df.iloc[int(n)]
-    row_list = row.tolist()
+    row_v = df.iloc[int(n)]
+    row_list = row_v.tolist()
 
     layer = wbe.new_raster(dem5m.configs)
     m = 0
@@ -37,7 +37,7 @@ for n in range(50):
     wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
 
-    output_filename = f'DEM_after_5m_{n}.tif'
+    output_filename = f'DEM5m_after_{n}.tif'
     wbe.write_raster(layer_after, output_filename, compress=True)
 
     # visualization
@@ -71,7 +71,7 @@ for n in range(50):
     wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                             r'\FloodRisk_optimization\03_visualization'
 
-    output_filename_02 = f'DEM_volume_5m_{n}.tif'
+    output_filename_02 = f'DEM5m_sink_volume_{n}.tif'
     wbe.write_raster(retention_area, output_filename_02, compress=True)
 
     # visualization
@@ -80,7 +80,11 @@ for n in range(50):
 
     fig, ax = plt.subplots(figsize=(16, 16))
     ax.tick_params(axis='both', which='major', labelsize=20)
-    show(data_01, title=f'DEM_sink_volume_{n}', ax=ax)
+
+    vmin = 0
+    vmax = 3
+
+    show(data_01, title=f'DEM_sink_volume_{n}', ax=ax, vmin=vmin, vmax=vmax)
     plt.ticklabel_format(style='plain')
     plt.show()
 

@@ -50,7 +50,7 @@ for n in range(50):
 
     wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
-    output_filename = f'DEM_sink_DEM10m_{n}.tif'
+    output_filename = f'DEM5m_sink_area_{n}.tif'
     wbe.write_raster(sink_area, output_filename, compress=True)
 
     # visualization

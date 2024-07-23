@@ -13,7 +13,7 @@ accumulated_raster = None
 
 # 循环读取每个文件，并累加
 for n in range(50):
-    filename = f'DEM_sink_DEM10m_{n}.tif'
+    filename = f'DEM5m_sink_area_{n}.tif'
     current_raster = wbe.read_raster(filename)
     if accumulated_raster is None:
         accumulated_raster = current_raster
@@ -24,16 +24,16 @@ for n in range(50):
 average_raster = accumulated_raster / 50
 
 # 创建一个新的栅格文件用于保存平均后的结果
-wbe.write_raster(average_raster, 'DEM_sink_DEM10m_average.tif', compress=True)
+wbe.write_raster(average_raster, 'DEM5m_sink_area_average.tif', compress=True)
 
-path_01 = f'../03_visualization/DEM_sink_DEM10m_average.tif'
+path_01 = f'../03_visualization/DEM5m_sink_area_average.tif'
 data_01 = rs.open(path_01)
 
 fig, ax = plt.subplots(figsize=(32, 32))
 ax.tick_params(axis='both', which='major', labelsize=40)
-show(data_01, title=f'DEM_sink_DEM10m_average', ax=ax)
+show(data_01, title=f'DEM5m_sink_area_average.tif', ax=ax)
 plt.ticklabel_format(style='plain')
-ax.grid(True, linestyle='--', color='grey')
+#ax.grid(True, linestyle='--', color='grey')
 
 # 添加颜色条
 cbar_ax = fig.add_axes([0.92, 0.19, 0.03, 0.3])  # 调整颜色条的位置和大小

@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('min_sink_volume_dem.tif')
+dem = wbe.read_raster('min_sink_area_dem.tif')
 #dem = wbe.read_raster('min_earth_volume_dem.tif')
 
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
@@ -46,21 +46,19 @@ wbe.write_raster(sink_area, 'DEM_demo_sink.tif', compress=True)
 path_01 = '../result/DEM_demo_sink.tif'
 data_01 = rs.open(path_01)
 
-dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
-min_elevation = np.min(dem_array[~dem_array.mask])
-max_elevation = np.max(dem_array[~dem_array.mask])
-
-# Use imshow to display the DEM data with the correct color mapping
-fig, ax = plt.subplots(figsize=(30, 24))
-image = ax.imshow(dem_array, vmin=min_elevation, vmax=max_elevation)
-show(data_01, ax=ax)
-
-# Create a colorbar
-cbar = plt.colorbar(image, ax=ax, orientation='vertical', shrink=0.5)
-cbar.set_label('Sink area')
-
+fig, ax = plt.subplots(figsize=(32, 32))
+ax.tick_params(axis='both', which='major', labelsize=40)
+show(data_01, title=f'DEM5m_sink_area_average.tif', ax=ax)
 plt.ticklabel_format(style='plain')
-ax.grid(True, linestyle='--', color='grey')
+#ax.grid(True, linestyle='--', color='grey')
+
+# 添加颜色条
+cbar_ax = fig.add_axes([0.92, 0.19, 0.03, 0.3])  # 调整颜色条的位置和大小
+cbar = plt.colorbar(ax.images[0], cax=cbar_ax)  # 使用 ax.images[0] 获取图像数据用于颜色条
+
+# 调整颜色条上刻度标签的字体大小
+cbar.ax.tick_params(labelsize=40)
+
 plt.show()
 
 
