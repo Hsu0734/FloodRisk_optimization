@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('Hanwen.tif')
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
 fill_dem = wbe.fill_depressions(dem, max_depth=0.05)
 sink = wbe.sink(fill_dem)
@@ -50,7 +50,7 @@ min_elevation = np.min(dem_array[~dem_array.mask])
 max_elevation = np.max(dem_array[~dem_array.mask])
 
 # Use imshow to display the DEM data with the correct color mapping
-fig, ax = plt.subplots(figsize=(30, 24))
+fig, ax = plt.subplots(figsize=(24, 16))
 image = ax.imshow(dem_array, vmin=min_elevation, vmax=max_elevation)
 show(data_01, ax=ax)
 

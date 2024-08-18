@@ -16,7 +16,7 @@ wbe.verbose = False
 
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source'
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('Hanwen_10m.tif')
 
 # creat a blank raster image of same size as the dem
 layer = wbe.new_raster(dem.configs)
@@ -52,7 +52,7 @@ class MyProblem(ElementwiseProblem):
     def _evaluate(self, x, out, *args, **kwargs):
         #var_list = [float(value) for value in x]
 
-        earth_volume_function = sum(abs(i) for i in x) * 25
+        earth_volume_function = sum(abs(i) for i in x) * 100
         sink_volume_function, sink_area_function = sink_sum_calculation(x)
 
         out["F"] = [earth_volume_function, sink_volume_function, sink_area_function]
@@ -106,7 +106,7 @@ def sink_sum_calculation(var_list):
         for col in range(retention_area.configs.columns):
             sink_volume = retention_area[row, col]
             if sink_volume != retention_area.configs.nodata:
-                volume = retention_area[row, col] * 25  # resolution = 5m
+                volume = retention_area[row, col] * 100  # resolution = 5m
                 Retention_volume.append(volume)
 
     # sink area calculation
@@ -147,7 +147,7 @@ algorithm = NSGA2(
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 50)
+termination = get_termination("n_gen", 100)
 
 from pymoo.optimize import minimize
 res = minimize(problem,
@@ -171,16 +171,16 @@ plot.show()
 
 #output_filename = f'DEM_sink_S3_1_{i}.tif'
 
-plot_figure_path = 'scatter_plot_DEM5m.png'
+plot_figure_path = 'scatter_plot_DEM10m.png'
 plot.save(plot_figure_path)
 
 # 2D Pairwise Scatter Plots
 
 # save the data
 result_df = pd.DataFrame(F)
-result_df.to_csv('output_solution_DEM5m.csv', index=False)
+result_df.to_csv('output_solution_DEM10m.csv', index=False)
 result_df = pd.DataFrame(X)
-result_df.to_csv('output_variable_DEM5m.csv', index=False)
+result_df.to_csv('output_variable_DEM10m.csv', index=False)
 
 
 ### Decision making ###
@@ -216,7 +216,6 @@ for row in range(dem.configs.rows):
 wbe.write_raster(min_earth_volume_dem, file_name='min_earth_volume_solution', compress=True)
 wbe.write_raster(min_sink_volume_dem, file_name='min_sink_volume_solution', compress=True)
 wbe.write_raster(min_sink_area_dem, file_name='min_sink_area_solution', compress=True)
-
 
 after_dem_minEV = dem - min_earth_volume_dem
 after_dem_minSV = dem - min_sink_volume_dem

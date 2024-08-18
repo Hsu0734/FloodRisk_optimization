@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('Hanwen_10m.tif')
 fill_dem = wbe.fill_depressions(dem)
 sink_area = fill_dem - dem
 
@@ -45,7 +45,7 @@ min_elevation = np.min(dem_array[~dem_array.mask])
 max_elevation = np.max(dem_array[~dem_array.mask])
 
 # Use imshow to display the DEM data with the correct color mapping
-fig, ax = plt.subplots(figsize=(30, 24))
+fig, ax = plt.subplots(figsize=(20, 16))
 image = ax.imshow(dem_array, vmin=min_elevation, vmax=max_elevation)
 show(data_01, ax=ax)
 
@@ -63,7 +63,7 @@ for row in range(retention_area.configs.rows):
     for col in range(retention_area.configs.columns):
         sink_volume = retention_area[row, col]
         if sink_volume != retention_area.configs.nodata:
-            volume = retention_area[row, col] * 25   # resolution = 5m
+            volume = retention_area[row, col] * 100   # resolution = 5m
             Retention_volume.append(volume)
 
 Total_volume = sum(Retention_volume)
