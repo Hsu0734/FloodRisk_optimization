@@ -139,8 +139,8 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.termination import get_termination
 
 algorithm = NSGA2(
-    pop_size=50,
-    n_offsprings=20,
+    pop_size=100,
+    n_offsprings=50,
     sampling=FloatRandomSampling(),
     crossover=SBX(prob=0.8, eta=15),
     mutation=PM(eta=15),

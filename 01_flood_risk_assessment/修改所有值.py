@@ -1,3 +1,9 @@
+"""
+DEM revision
+Author: Hanwen Xu
+Date: Jun 029, 2024
+"""
+
 import whitebox_workflows as wbw
 import rasterio as rs
 from rasterio.plot import show
@@ -12,9 +18,15 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_mask_2.tif')
+dem = wbe.read_raster('Hanwen_2m_buffer.tif')
+mask = wbe.new_raster(dem.configs)
 
 for row in range(dem.configs.rows):
     for col in range(dem.configs.columns):
         elev = dem[row, col]
-        print(elev)
+        if elev == dem.configs.nodata:
+            mask[row, col] = dem.configs.nodata
+        elif elev != dem.configs.nodata:
+            mask[row, col] = 1.0
+
+wbe.write_raster(mask, 'Hanwen_2m_mask.tif', compress=True)

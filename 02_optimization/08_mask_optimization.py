@@ -10,13 +10,12 @@ from pymoo.core.problem import ElementwiseProblem
 import numpy as np
 import pandas as pd
 
-
 wbe = wbw.WbEnvironment()
 wbe.verbose = False
 
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source'
-mask = wbe.read_raster('Hanwen_mask_2.tif')
+mask = wbe.read_raster('Hanwen_mask.tif')
 dem = wbe.read_raster('Hanwen_5m.tif')
 
 # creat a blank raster image of same size as the dem
@@ -144,15 +143,15 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.termination import get_termination
 
 algorithm = NSGA2(
-    pop_size=50,
-    n_offsprings=20,
+    pop_size=200,
+    n_offsprings=100,
     sampling=FloatRandomSampling(),
     crossover=SBX(prob=0.8, eta=15),
     mutation=PM(eta=15),
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 50)
+termination = get_termination("n_gen", 100)
 
 from pymoo.optimize import minimize
 res = minimize(problem,

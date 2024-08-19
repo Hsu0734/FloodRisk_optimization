@@ -21,7 +21,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 dem = wbe.read_raster('DEM_demo_flow_path.tif')
 sink = wbe.read_raster('DEM_demo_sink.tif')
 
-buffer = wbe.buffer_raster(dem, buffer_size=1.0, grid_cells_units=True)
+buffer = wbe.buffer_raster(dem, buffer_size= 1.0, grid_cells_units=True)
 buffer = buffer + sink
 
 
