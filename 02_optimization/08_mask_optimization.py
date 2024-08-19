@@ -15,7 +15,7 @@ wbe.verbose = False
 
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source'
-mask = wbe.read_raster('Hanwen_mask.tif')
+mask = wbe.read_raster('Hanwen_5m_mask.tif')
 dem = wbe.read_raster('Hanwen_5m.tif')
 
 # creat a blank raster image of same size as the dem
