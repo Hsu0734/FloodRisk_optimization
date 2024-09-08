@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_10m.tif')
+dem = wbe.read_raster('Hanwen_5m.tif')
 fill_dem = wbe.fill_depressions(dem)
 sink_area = fill_dem - dem
 
