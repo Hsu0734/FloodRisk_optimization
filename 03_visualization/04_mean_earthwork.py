@@ -13,7 +13,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 accumulated_raster = None
 
 # 循环读取每个文件，并累加
-for n in range(50):
+for n in range(100):
     filename = f'DEM_solution_DEM5m_{n}.tif'
     current_raster = wbe.read_raster(filename)
     if accumulated_raster is None:
@@ -22,7 +22,7 @@ for n in range(50):
         accumulated_raster += current_raster
 
 # 计算平均值
-average_raster = accumulated_raster / 50
+average_raster = accumulated_raster / 100
 
 # 创建一个新的栅格文件用于保存平均后的结果
 wbe.write_raster(average_raster, 'DEM_solution_DEM5m_average.tif', compress=True)

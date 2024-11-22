@@ -47,7 +47,7 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([1] * n_grid),
+                         xu=np.array([0.5] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
@@ -72,7 +72,7 @@ def sink_sum_calculation(var_list):
             elif dem[row, col] != dem.configs.nodata and mask[row, col] == mask.configs.nodata:
                 cut_and_fill[row, col] = 0.0
             elif dem[row, col] != dem.configs.nodata and mask[row, col] != mask.configs.nodata:
-                cut_and_fill[row, col] = round(var_list[i], 2)
+                cut_and_fill[row, col] = round(var_list[i], 3)
                 i = i + 1
 
     # creat dem_pop
@@ -86,26 +86,22 @@ def sink_sum_calculation(var_list):
                 dem_pop[row, col] = dem[row, col] - cut_and_fill[row, col]
 
     # sink volume calculation 小于0.05深度的不计入总蓄水量
-    fill_dem = wbe.fill_depressions(dem_pop)
-    sink_area = fill_dem - dem_pop
-
-    retention_area = wbe.new_raster(dem_pop.configs)
+    depth_in_sink = wbe.depth_in_sink(dem_pop, zero_background=False)
+    sink = wbe.new_raster(depth_in_sink.configs)
     Retention_volume = []
 
-    for row in range(sink_area.configs.rows):
-        for col in range(sink_area.configs.columns):
-            if sink_area[row, col] == dem.configs.nodata:
-                retention_area[row, col] = dem.configs.nodata
-            elif sink_area[row, col] >= 0.05:
-                retention_area[row, col] = sink_area[row, col]
-                volume = retention_area[row, col] * 100
+    for row in range(depth_in_sink.configs.rows):
+        for col in range(depth_in_sink.configs.columns):
+            if depth_in_sink[row, col] == depth_in_sink.configs.nodata:
+                sink[row, col] = depth_in_sink.configs.nodata
+            elif depth_in_sink[row, col] >= 0.05:
+                sink[row, col] = depth_in_sink[row, col]
+                volume = depth_in_sink[row, col] * 100
                 Retention_volume.append(volume)
-            elif sink_area[row, col] <= 0.05 and sink_area[row, col] != dem.configs.nodata:
-                retention_area[row, col] = 0.0
+            elif depth_in_sink[row, col] <= 0.05 and depth_in_sink[row, col] != dem.configs.nodata:
+                sink[row, col] = depth_in_sink.configs.nodata
 
     # sink area calculation
-    fill_depression = wbe.fill_depressions(dem_pop, max_depth=0.05)
-    sink = wbe.sink(fill_depression, zero_background=False)
     Sink_value = []
     a = 0.0
     b = 1.0
@@ -131,16 +127,57 @@ from pymoo.operators.mutation.pm import PM
 from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.termination import get_termination
 
+
+class RoundedSBX(SBX):
+    def __init__(self, prob, eta, decimals=3):
+        super().__init__(prob=prob, eta=eta)
+        self.decimals = decimals
+
+    def _do(self, problem, X, **kwargs):
+        # 调用父类方法进行交叉操作
+        X = super()._do(problem, X, **kwargs)
+        # 保留指定小数位数
+        X = np.round(X, self.decimals)
+        return X
+
+
+class RoundedPM(PM):
+    def __init__(self, eta, decimals=3):
+        super().__init__(eta=eta)
+        self.decimals = decimals
+
+    def _do(self, problem, X, **kwargs):
+        # 调用父类方法进行变异操作
+        X = super()._do(problem, X, **kwargs)
+        # 保留指定小数位数
+        X = np.round(X, self.decimals)
+        return X
+
+
+class RoundedFloatRandomSampling(FloatRandomSampling):
+    def __init__(self, decimals=3):
+        super().__init__()
+        self.decimals = decimals
+
+    def _do(self, problem, n_samples, **kwargs):
+        # 调用父类方法生成随机数
+        X = super()._do(problem, n_samples, **kwargs)
+        # 使用 np.round 保留小数点后指定的位数
+        X = np.round(X, self.decimals)
+        return X
+
+# 使用自定义采样器，并指定保留3位小数
+
 algorithm = NSGA2(
     pop_size=100,
     n_offsprings=50,
-    sampling=FloatRandomSampling(),
-    crossover=SBX(prob=0.8, eta=15),
-    mutation=PM(eta=15),
+    sampling=RoundedFloatRandomSampling(decimals=3),
+    crossover=RoundedSBX(prob=0.8, eta=15, decimals=3),
+    mutation=RoundedPM(eta=15, decimals=3),
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 50)
+termination = get_termination("n_gen", 100)
 
 from pymoo.optimize import minimize
 res = minimize(problem,

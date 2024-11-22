@@ -11,11 +11,11 @@ wbe = wbw.WbEnvironment()
 wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\00_data_source'
-dem = wbe.read_raster('Hanwen_mask_2.tif')
+dem = wbe.read_raster('Hanwen_5m_mask.tif')
 dem5m = wbe.read_raster('Hanwen_5m.tif')
 
 # 循环处理CSV文件中的0到99行
-for n in range(50):
+for n in range(100):
 
     row_v = df.iloc[int(n)]
     row_list = row_v.tolist()
@@ -95,7 +95,7 @@ for n in range(50):
         for col in range(retention_area.configs.columns):
             sink_volume = retention_area[row, col]
             if sink_volume != retention_area.configs.nodata:
-                volume = retention_area[row, col] * 25  # resolution = 5m
+                volume = retention_area[row, col] * 4  # resolution = 5m
                 Retention_volume.append(volume)
 
     Total_volume = sum(Retention_volume)

@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('Hanwen_2m.tif')
 fill_dem = wbe.fill_depressions(dem)
 sink_area = fill_dem - dem
 
@@ -40,21 +40,23 @@ wbe.write_raster(retention_area, 'DEM_demo_sink_dem.tif', compress=True)
 path_01 = '../00_data_source/DEM_demo_sink_dem.tif'
 data_01 = rs.open(path_01)
 
-dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
-min_elevation = np.min(dem_array[~dem_array.mask])
-max_elevation = np.max(dem_array[~dem_array.mask])
+fig, ax = plt.subplots(figsize=(32, 32))
+ax.tick_params(axis='both', which='major', labelsize=40)
 
-# Use imshow to display the DEM data with the correct color mapping
-fig, ax = plt.subplots(figsize=(20, 16))
-image = ax.imshow(dem_array, vmin=min_elevation, vmax=max_elevation)
-show(data_01, ax=ax)
-
-# Create a colorbar
-cbar = plt.colorbar(image, ax=ax, orientation='vertical', shrink=0.5)
-cbar.set_label('Sink area')
-
+vmin = 0
+vmax = 3
+show(data_01, title=f'DEM_volume_5m_average', ax=ax, vmin=vmin, vmax=vmax)
+#show(data_01, title=f'DEM_volume_5m_average', ax=ax)
 plt.ticklabel_format(style='plain')
-ax.grid(True, linestyle='--', color='grey')
+# ax.grid(True, linestyle='--', color='grey')
+
+# 添加颜色条
+cbar_ax = fig.add_axes([0.92, 0.19, 0.03, 0.3])  # 调整颜色条的位置和大小
+cbar = plt.colorbar(ax.images[0], cax=cbar_ax)  # 使用 ax.images[0] 获取图像数据用于颜色条
+
+# 调整颜色条上刻度标签的字体大小
+cbar.ax.tick_params(labelsize=40)
+
 plt.show()
 
 
@@ -63,7 +65,7 @@ for row in range(retention_area.configs.rows):
     for col in range(retention_area.configs.columns):
         sink_volume = retention_area[row, col]
         if sink_volume != retention_area.configs.nodata:
-            volume = retention_area[row, col] * 100   # resolution = 5m
+            volume = retention_area[row, col] * 4   # resolution = 5m
             Retention_volume.append(volume)
 
 Total_volume = sum(Retention_volume)

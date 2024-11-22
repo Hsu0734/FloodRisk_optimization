@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_5m.tif')
+dem = wbe.read_raster('Hanwen_2m.tif')
 
 # slope analysis
 dem = wbe.fill_depressions(dem)
@@ -27,7 +27,7 @@ flow_path = wbe.new_raster(flow_accu.configs)
 for row in range(flow_accu.configs.rows):
     for col in range(flow_accu.configs.columns):
         elev = flow_accu[row, col]
-        if elev >= 75.12:
+        if elev >= 91.90:
             flow_path[row, col] = 1.0
         elif elev == flow_accu.configs.nodata:
             flow_path[row, col] = flow_accu.configs.nodata
