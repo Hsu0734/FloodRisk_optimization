@@ -47,7 +47,7 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([1] * n_grid),
+                         xu=np.array([2] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
@@ -171,9 +171,9 @@ class RoundedFloatRandomSampling(FloatRandomSampling):
 algorithm = NSGA2(
     pop_size=100,
     n_offsprings=50,
-    sampling=RoundedFloatRandomSampling(decimals=3),
-    crossover=RoundedSBX(prob=0.8, eta=15, decimals=3),
-    mutation=RoundedPM(eta=15, decimals=3),
+    sampling=RoundedFloatRandomSampling(decimals=2),
+    crossover=RoundedSBX(prob=0.8, eta=15, decimals=2),
+    mutation=RoundedPM(eta=15, decimals=2),
     eliminate_duplicates=True)
 
 

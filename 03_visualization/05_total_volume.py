@@ -95,7 +95,7 @@ for n in range(100):
         for col in range(retention_area.configs.columns):
             sink_volume = retention_area[row, col]
             if sink_volume != retention_area.configs.nodata:
-                volume = retention_area[row, col] * 4  # resolution = 5m
+                volume = retention_area[row, col] * 25  # resolution = 5m
                 Retention_volume.append(volume)
 
     Total_volume = sum(Retention_volume)
