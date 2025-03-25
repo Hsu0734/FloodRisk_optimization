@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_2m.tif')
+dem = wbe.read_raster('DEM_demo_resample_5m.tif')
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
 depth = wbe.depth_in_sink(dem, zero_background=False)
 '''sink_area = wbe.new_raster(dem.configs)

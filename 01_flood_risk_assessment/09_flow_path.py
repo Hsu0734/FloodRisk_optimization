@@ -24,11 +24,14 @@ dem = wbe.read_raster('Hanwen_2m.tif')
 dem = wbe.fill_depressions(dem)
 flow_accu = wbe.d8_flow_accum(dem, out_type='cells')
 flow_path = wbe.new_raster(flow_accu.configs)
+a = 1
 for row in range(flow_accu.configs.rows):
     for col in range(flow_accu.configs.columns):
         elev = flow_accu[row, col]
-        if elev >= 91.90:
+        if elev >= 91.9:
             flow_path[row, col] = 1.0
+            a= a + 1
+            print(a)
         elif elev == flow_accu.configs.nodata:
             flow_path[row, col] = flow_accu.configs.nodata
         else:

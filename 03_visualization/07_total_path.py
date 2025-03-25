@@ -11,8 +11,8 @@ wbe = wbw.WbEnvironment()
 wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\00_data_source'
-dem = wbe.read_raster('Hanwen_mask_2m.tif')
-dem5m = wbe.read_raster('Hanwen_2m.tif')
+dem = wbe.read_raster('DEM_demo_resample_5m.tif')
+dem5m = wbe.read_raster('DEM_demo_resample_5m.tif')
 
 # 循环处理CSV文件中的0到99行
 for n in range(100):
@@ -35,23 +35,23 @@ for n in range(100):
     #dem_solution = dem5m - layer
     dem_solution = wbe.raster_calculator(expression="'dem5m' - 'layer'", input_rasters=[dem5m, layer])
 
-    sink = wbe.sink(dem_solution)
-    sink_area = wbe.new_raster(dem5m.configs)
-    for row in range(sink_area.configs.rows):
-        for col in range(sink_area.configs.columns):
-            area = dem5m[row, col]
-            area_sink = sink[row, col]
-            if area != dem.configs.nodata and area_sink == sink.configs.nodata:
-                sink_area[row, col] = 0.0
-            elif area == dem.configs.nodata:
-                sink_area[row, col] = dem.configs.nodata
-            elif area_sink != sink.configs.nodata:
-                sink_area[row, col] = 1.0
+    flow_accum = wbe.d8_flow_accum(dem_solution, out_type='cells')
+    path_length = wbe.new_raster(flow_accum.configs)
+    for row in range(flow_accum.configs.rows):
+        for col in range(flow_accum.configs.columns):
+            elev = flow_accum[row, col]  # Read a cell value from a Raster
+            if elev >= 29.12 and elev != flow_accum.configs.nodata:
+                path_length[row, col] = 1.0
+            elif elev == flow_accum.configs.nodata:
+                path_length[row, col] = flow_accum.configs.nodata
+            elif elev < 29.12:
+                path_length[row, col] = 0.0
+
 
     wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\03_visualization'
-    output_filename = f'DEM5m_sink_area_{n}.tif'
-    wbe.write_raster(sink_area, output_filename, compress=True)
+    output_filename = f'DEM5m_path_length_{n}.tif'
+    wbe.write_raster(path_length, output_filename, compress=True)
 
     # visualization
     path_01 = f'../03_visualization/{output_filename}'
@@ -59,7 +59,7 @@ for n in range(100):
 
     fig, ax = plt.subplots(figsize=(16, 16))
     ax.tick_params(axis='both', which='major', labelsize=20)
-    show(data_01, title=f'DEM_sink_{n}', ax=ax)
+    show(data_01, title=f'DEM_path_{n}', ax=ax)
     plt.ticklabel_format(style='plain')
     plt.show()
     plt.close(fig)  # 关闭图形以释放内存

@@ -11,7 +11,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
                         r'\FloodRisk_optimization\00_data_source'
 
 # web read DEM data
-dem = wbe.read_raster('DEM2m.tif')
+dem = wbe.read_raster('Hanwen_2m.tif')
 slope = wbe.read_raster('DEM_demo_slope.tif')
 flow_accum = wbe.read_raster('DEM_demo_flow_accu.tif')
 velocity = wbe.new_raster(slope.configs)
