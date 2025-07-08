@@ -2,6 +2,7 @@ import whitebox_workflows as wbw
 import rasterio as rs
 from rasterio.plot import show
 import matplotlib.pyplot as plt
+import numpy as np
 
 wbe = wbw.WbEnvironment()
 wbe.verbose = False
@@ -33,7 +34,12 @@ fig, ax = plt.subplots(figsize=(32, 32))
 ax.tick_params(axis='both', which='major', labelsize=40)
 
 vmin = 0
-vmax = 2
+vmax = 3.0
+
+'''dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值
+min_elevation = np.min(dem_array[~dem_array.mask])
+max_elevation = np.max(dem_array[~dem_array.mask])'''
+
 show(data_01, title=f'DEM_volume_5m_average', ax=ax, vmin=vmin, vmax=vmax)
 plt.ticklabel_format(style='plain')
 # ax.grid(True, linestyle='--', color='grey')

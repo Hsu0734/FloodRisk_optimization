@@ -10,3 +10,4 @@ and using 20cm statistics resolution when approximating water level of partially
 ### malstroem complete -mm 36.19 -filter "maxdepth > 0.05" -dem D:\Output\Changsha_float32.tif -outdir D:\Output\Changsha -zresolution 0.2
 
 ### malstroem complete -mm 20 -filter "volume > 0.5" -dem D:\Output\Hanwen1.tif -outdir D:\Output\222 -zresolution 0.2
+DEM_solution_DEM5m_0

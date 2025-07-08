@@ -19,11 +19,10 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 # web read DEM data
 dem = wbe.read_raster('DEM_demo_flow_path.tif')
-sink = wbe.read_raster('DEM_demo_sink.tif')
+sink = wbe.read_raster('Greve_buffer.tif')
 
-buffer = wbe.buffer_raster(dem, buffer_size=3.0, grid_cells_units=True)
-buffer = buffer + sink
-
+dem = dem + sink
+buffer = wbe.buffer_raster(dem, buffer_size=4.0, grid_cells_units=True)
 
 wbe.write_raster(buffer, 'DEM_demo_buffer.tif', compress=True)
 

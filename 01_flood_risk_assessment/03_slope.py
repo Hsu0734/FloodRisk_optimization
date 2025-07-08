@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('DEM2m.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 
 # slope analysis
 slope = wbe.slope(dem, units="percent")

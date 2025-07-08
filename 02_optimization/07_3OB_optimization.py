@@ -16,7 +16,7 @@ wbe.verbose = False
 
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
             r'\FloodRisk_optimization\00_data_source'
-dem = wbe.read_raster('Hanwen_10m.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 
 # creat a blank raster image of same size as the dem
 layer = wbe.new_raster(dem.configs)
@@ -45,14 +45,14 @@ class MyProblem(ElementwiseProblem):
                          n_ieq_constr=0,
                          n_eq_constr=0,
                          xl=np.array([0] * n_grid),
-                         xu=np.array([0.5] * n_grid),
+                         xu=np.array([2.0] * n_grid),
                          **kwargs)
         self.n_grid = n_grid
 
     def _evaluate(self, x, out, *args, **kwargs):
         #var_list = [float(value) for value in x]
 
-        earth_volume_function = sum(abs(i) for i in x) * 100
+        earth_volume_function = sum(abs(i) for i in x) * 25
         sink_volume_function, sink_area_function = sink_sum_calculation(x)
 
         out["F"] = [earth_volume_function, sink_volume_function, sink_area_function]
@@ -106,7 +106,7 @@ def sink_sum_calculation(var_list):
         for col in range(retention_area.configs.columns):
             sink_volume = retention_area[row, col]
             if sink_volume != retention_area.configs.nodata:
-                volume = retention_area[row, col] * 100  # resolution = 5m
+                volume = retention_area[row, col] * 25  # resolution = 5m
                 Retention_volume.append(volume)
 
     # sink area calculation
@@ -140,14 +140,14 @@ from pymoo.termination import get_termination
 
 algorithm = NSGA2(
     pop_size=100,
-    n_offsprings=50,
+    n_offsprings=40,
     sampling=FloatRandomSampling(),
     crossover=SBX(prob=0.8, eta=15),
     mutation=PM(eta=15),
     eliminate_duplicates=True)
 
 
-termination = get_termination("n_gen", 100)
+termination = get_termination("n_gen", 60)
 
 from pymoo.optimize import minimize
 res = minimize(problem,
@@ -171,16 +171,16 @@ plot.show()
 
 #output_filename = f'DEM_sink_S3_1_{i}.tif'
 
-plot_figure_path = 'scatter_plot_DEM10m.png'
+plot_figure_path = 'scatter_plot_DEM5m.png'
 plot.save(plot_figure_path)
 
 # 2D Pairwise Scatter Plots
 
 # save the data
 result_df = pd.DataFrame(F)
-result_df.to_csv('output_solution_DEM10m.csv', index=False)
+result_df.to_csv('output_solution_DEM5m.csv', index=False)
 result_df = pd.DataFrame(X)
-result_df.to_csv('output_variable_DEM10m.csv', index=False)
+result_df.to_csv('output_variable_DEM5m.csv', index=False)
 
 
 ### Decision making ###

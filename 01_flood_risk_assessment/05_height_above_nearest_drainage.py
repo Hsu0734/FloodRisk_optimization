@@ -17,7 +17,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
                         r'\FloodRisk_optimization\00_data_source'
 
 # web read DEM data
-dem_00 = wbe.read_raster('DEM2m.tif')
+dem_00 = wbe.read_raster('Greve_5m.tif')
 
 # HAND analysis
 dem = wbe.fill_depressions(dem_00)

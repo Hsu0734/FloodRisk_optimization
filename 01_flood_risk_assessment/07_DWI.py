@@ -16,7 +16,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
                         r'\FloodRisk_optimization\00_data_source'
 
 # web read DEM data
-dem = wbe.read_raster('DEM2m.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 
 # distance to streams analysis
 slope = wbe.slope(dem, units='percent')

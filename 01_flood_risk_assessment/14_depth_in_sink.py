@@ -18,10 +18,10 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('DEM_demo_resample_5m.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
 depth = wbe.depth_in_sink(dem, zero_background=False)
-'''sink_area = wbe.new_raster(dem.configs)
+sink_area = wbe.new_raster(dem.configs)
 
 Sink_area = []
 a = 1
@@ -29,16 +29,16 @@ a = 1
 for row in range(sink_area.configs.rows):
     for col in range(sink_area.configs.columns):
         area = dem[row, col]
-        area_sink = sink[row, col]
-        if area != dem.configs.nodata and area_sink == sink.configs.nodata:
+        area_sink = depth[row, col]
+        if area != dem.configs.nodata and area_sink == depth.configs.nodata:
             sink_area[row, col] = 0.0
         elif area == dem.configs.nodata:
             sink_area[row, col] = dem.configs.nodata
-        elif area_sink != sink.configs.nodata:
-            sink_area[row, col] = 1.0
-            Sink_area.append(a)'''
+        elif area_sink != depth.configs.nodata:
+            sink_area[row, col] = depth[row, col]
+            Sink_area.append(a)
 
-wbe.write_raster(depth, 'DEM_depth_sink.tif', compress=True)
+wbe.write_raster(sink_area, 'DEM_depth_sink.tif', compress=True)
 
 # visualization
 path_01 = '../00_data_source/DEM_depth_sink.tif'

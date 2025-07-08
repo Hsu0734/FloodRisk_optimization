@@ -18,7 +18,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
 
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_2m.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 # dem_00 = wbe.fill_missing_data(dem, exclude_edge_nodata= True)
 fill_dem = wbe.fill_depressions(dem, max_depth=0.05)
 sink = wbe.sink(fill_dem)
@@ -59,7 +59,7 @@ cbar = plt.colorbar(image, ax=ax, orientation='vertical', shrink=0.5)
 cbar.set_label('Sink area')
 
 plt.ticklabel_format(style='plain')
-#ax.grid(True, linestyle='--', color='grey')
+ax.grid(True, linestyle='--', color='grey')
 plt.show()
 
 print(sum(Sink_area))

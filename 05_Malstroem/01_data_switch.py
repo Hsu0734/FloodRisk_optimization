@@ -3,18 +3,19 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 import numpy as np
 
 # 输入和输出 DEM 文件路径
-input_dem = "changsha_zcq_2.tif"  # 替换为你的原始 DEM 文件路径
-output_dem = "changsha_zcq_bilinear_float32.tif"  # 输出 DEM 路径（包含重采样）
+input_dem = "Jamaica_30m.tif"  # 替换为你的原始 DEM 文件路径
+output_dem = "Jamaica_30m_float32.tif"  # 输出 DEM 路径（包含重采样）
 
 # NoData 值设置
-new_nodata = np.nan  # 可替换为 np.nan 如果需要
+new_nodata = -3.40282e+38  # 可替换为 np.nan 如果需要
 
-# 目标 CRS (CGCS2000 / 3-degree Gauss-Kruger CM 111E - EPSG:4534)
+# 目标 CRS (CGCS2000 / 3-degree Gauss-Kruger CM 111E - EPSG:4534) / EPSG:32647
 # target_crs = 'EPSG:4546'
-target_crs = 'EPSG:4546'
+target_crs = 'EPSG:32617'
+
 
 # 目标分辨率（30x30米）
-target_resolution = 30
+target_resolution = 30.0
 
 # 读取原始 DEM
 with rasterio.open(input_dem) as src:
@@ -52,7 +53,7 @@ with rasterio.open(input_dem) as src:
             src_crs=original_crs,
             dst_transform=transform,
             dst_crs=target_crs,
-            resampling=Resampling.bilinear
+            resampling=Resampling.nearest
         )
 
 print(f"DEM 预处理完成，输出文件保存在: {output_dem}")

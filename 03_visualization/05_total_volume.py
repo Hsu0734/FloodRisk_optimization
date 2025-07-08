@@ -11,8 +11,8 @@ wbe = wbw.WbEnvironment()
 wbe.verbose = False
 wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modification optimization' \
                         r'\FloodRisk_optimization\00_data_source'
-dem = wbe.read_raster('Hanwen_mask_2m.tif')
-dem5m = wbe.read_raster('Hanwen_2m.tif')
+dem = wbe.read_raster('Greve_mask_5m.tif')
+dem5m = wbe.read_raster('Greve_5m.tif')
 
 # 循环处理CSV文件中的0到99行
 for n in range(100):

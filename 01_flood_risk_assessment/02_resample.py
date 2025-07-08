@@ -18,14 +18,14 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
                         r'\FloodRisk_optimization\00_data_source'
 
 # web read DEM data
-dem = wbe.read_raster('DEM_CPH.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 
 # resample
-resample = wbe.resample(input_rasters=[dem], cell_size=2.0)
-wbe.write_raster(resample, 'DEM_CPH_2m.tif', compress=True)
+resample = wbe.resample(input_rasters=[dem], cell_size=5.0)
+wbe.write_raster(resample, 'DEM_Greve_5m.tif', compress=True)
 
 # visualization
-path_01 = '../00_data_source/DEM_CPH_2m.tif'
+path_01 = '../00_data_source/DEM_Greve_5m.tif'
 data_01 = rs.open(path_01)
 
 dem_array = data_01.read(1, masked=True)  # 使用 masked=True 来自动处理 nodata 值

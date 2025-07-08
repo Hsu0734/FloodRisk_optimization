@@ -11,7 +11,7 @@ wbe.working_directory = r'D:\PhD career\05 SCI papers\08 Topographic modificatio
                         r'\FloodRisk_optimization\00_data_source'
 
 # web read DEM data
-dem = wbe.read_raster('Hanwen_2m.tif')
+dem = wbe.read_raster('Greve_5m.tif')
 slope = wbe.read_raster('DEM_demo_slope.tif')
 flow_accum = wbe.read_raster('DEM_demo_flow_accu.tif')
 velocity = wbe.new_raster(slope.configs)
@@ -26,7 +26,7 @@ for row in range(slope.configs.rows):
             #velocity[row, col] = (((flow_accum[row, col] * 100 * 0.000004215717) ** 0.4) * ((slope[row, col] / 100) ** 0.3))/((10 ** 0.4) * (0.03 ** 0.6))
             #velocity[row, col] = ((((slope[row, col] / 100) ** 0.5) * (flow_accum[row, col] * 100 * 0.000004215717 / 10) ** (2/3)) / 0.03) ** 0.6
             slope_factor = (slope[row, col] / 100) ** 0.5
-            flow_factor = (flow_accum[row, col] * 4 * 0.00001042) ** (2 / 3)
+            flow_factor = (flow_accum[row, col] * 25 * 0.00001042) ** (2 / 3)
             velocity[row, col] = (slope_factor * flow_factor / 0.03) ** 0.6
 
 wbe.write_raster(velocity, 'DEM_demo_velocity.tif', compress=True)
